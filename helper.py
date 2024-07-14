@@ -13,7 +13,7 @@ from langchain.memory import PostgresChatMessageHistory
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 # from dataCreation import get_docs
-load_dotenv()
+load_dotenv(override=True)
 
 # initialize LLM
 def initialize_llm():
@@ -92,11 +92,15 @@ def get_prompt(query):
         print("sim context " , simmcontext )
 
     return """ you are a salse person. try to give human like response according to user query and given context.
-    Use the following context (delimited by <ctx></ctx>) to answer the question. try to give suggestions for two to three relevant products. try to give full product names in response :
+    Use the following context (delimited by <ctx></ctx>) and the chat history (delimited by <hs></hs>)   to answer the question. try to give suggestions for two to three relevant products. try to give full product names in response :
     ------
     <ctx> """ + simmcontext + """
     {context}
     </ctx>
+    ------
+    <hs>
+    {history}
+    </hs>
     ------
     {question}
     Answer:
@@ -111,10 +115,10 @@ def ask_ai(companyName , query):
         template=template,
     )
     # history
-    # history = PostgresChatMessageHistory(
-    #     connection_string=os.getenv("POSTGRES_CONNECTION_STRING"),
-    #     session_id=companyName,)
-    # user_memory = ConversationBufferWindowMemory(k=3 , memory_key="history" , chat_memory= history, input_key="question")
+    history = PostgresChatMessageHistory(
+        connection_string=os.getenv("POSTGRES_CONNECTION_STRING"),
+        session_id=companyName,)
+    user_memory = ConversationBufferWindowMemory(k=3 , memory_key="history" , chat_memory= history, input_key="question")
     posgres_qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type='stuff',
@@ -123,7 +127,7 @@ def ask_ai(companyName , query):
         chain_type_kwargs={
             # "verbose": True,
             "prompt": prompt,
-            # "memory": user_memory
+            "memory": user_memory
         }
     )
     # print("prompt -------------------------- " , vector_db.similarity_search(query=query , k=10))
