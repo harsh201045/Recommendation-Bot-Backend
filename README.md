@@ -14,13 +14,13 @@ you can see implementation of the recommendadtion bot front-end [here](https://g
 Clone the project
 
 ```bash
-  git clone https://github.com/Korat-Dishant/ultimateCCv2
+  git clone https://github.com/harsh201045/Recommendation-Bot-Backend
 ```
 
 Go to the project directory
 
 ```bash
-  cd ultimateCCv2
+  cd Recommendation-Bot-Backend
 ```
 
 Install dependencies
